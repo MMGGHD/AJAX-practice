@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>카테고리별 기술 목록 보기</h1>
+    <hr />
+    <select id="category" onchange="onCategoryChange()" onclick="onClick()">
+
+    </select>
+    <select id="tech">
+
+    </select>
+</body>
+
+<script>
+
+    async function fetchCategory() {
+        let response = await fetch("/api/category");
+        let body = await response.json(); // json -> js object
+        let categoryEl = document.querySelector("#category");
+        for (c of body) {
+            let optionEl = document.createElement("option");
+            optionEl.value = c.id;
+            // console.log(c.id);
+            // console.log(c.name);
+            // console.log(optionEl.value);
+            optionEl.innerHTML = c.name;
+            categoryEl.append(optionEl);
+        }
+    }
+    // <if문 대신 foreach문 쓰려면 아래 코드>
+    // for (c of body) {
+    //     let optionEl = document.createElement("option")
+    //     optionEl.innerHTML = c.name;
+    //     categoryEl.append(optionEl);
+    // }
+
+    async function fetchTech(categoryId) {
+        let response = await fetch("/api/tech?categoryId=" + categoryId);
+        console.log("categoryId : " + categoryId);
+        let body = await response.json(); // json -> js object
+        let techEl = document.querySelector("#tech");
+        techEl.innerHTML = "";
+
+        for (t of body) {
+            let optionEl = document.createElement("option");
+            optionEl.value = t.id;
+            optionEl.innerHTML = t.name;
+            techEl.append(optionEl);
+        }
+    }
+
+
+    async function onCategoryChange() {
+        let categoryEl = document.querySelector("#category");
+        selectedCategoryId = categoryEl.value;
+        console.log("selectedCategoryId"+ selectedCategoryId )
+        fetchTech(selectedCategoryId);
+    }
+
+
+    async function onClick() {
+        let categoryEl = document.querySelector("#category");
+        let optionVal = categoryEl.value;
+        console.log("optionVal : " + optionVal);
+    }
+    
+    fetchCategory();
+    fetchTech(1);
+</script>
+
+</html>
